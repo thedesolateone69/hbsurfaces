@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HB Surfaces — Brand Identity Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0a0a0a;
+    --mid: #6b6b6b;
+    --line: #c4c4c0;
+    --bg: #dcd9d2;
+    --bg-soft: #e4e1da;
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 1rem;
+    line-height: 1.55;
+    font-weight: 400;
+    letter-spacing: -0.008em;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem; }
+
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 2px; background: var(--ink);
+    width: 0%; transition: width 0.3s ease; z-index: 100;
+  }
+
+  .colophon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    padding-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  header {
+    border-bottom: 1px solid var(--ink);
+    padding: 3.5rem 0 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .meta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 3rem;
+  }
+
+  .meta-row .label {
+    display: block;
+    color: var(--mid);
+    margin-bottom: 0.3rem;
+    font-size: 0.62rem;
+  }
+
+  .meta-row .value {
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-size: clamp(3rem, 7.5vw, 5rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--mid);
+    display: block;
+    font-size: 0.7em;
+  }
+
+  .intro { color: var(--ink); font-size: 1rem; line-height: 1.6; max-width: 34rem; margin-top: 2rem; }
+
+  .section {
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .section.visible { opacity: 1; transform: none; }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--mid);
+    letter-spacing: 0.08em;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.4rem;
+    letter-spacing: -0.015em;
+    font-weight: 400;
+  }
+
+  .question { margin-bottom: 2rem; }
+
+  .q-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .q-hint {
+    display: block;
+    font-size: 0.86rem;
+    color: var(--mid);
+    margin-bottom: 0.75rem;
+    margin-top: -0.15rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  input[type="text"], input[type="url"], input[type="email"], textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    padding: 0.55rem 0;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.98rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    border-radius: 0;
+    letter-spacing: -0.008em;
+  }
+
+  input:focus, textarea:focus { border-bottom-width: 2px; }
+  textarea { resize: vertical; min-height: 72px; line-height: 1.55; font-family: inherit; }
+  ::placeholder { color: #9b9892; font-weight: 400; }
+
+  /* ── Image upload (fixed) ── */
+  .upload-zone {
+    border: 1px dashed var(--mid);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    margin-top: 0.5rem;
+    position: relative;
+  }
+
+  .upload-zone:hover,
+  .upload-zone.drag {
+    border-color: var(--ink);
+    border-style: solid;
+  }
+
+  .upload-zone p {
+    font-size: 0.88rem;
+    color: var(--mid);
+    letter-spacing: -0.005em;
+    pointer-events: none;
+  }
+
+  .upload-zone p strong { color: var(--ink); font-weight: 500; }
+
+  #fileInput { display: none; }
+
+  .thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .thumb {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--bg-soft);
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .thumb .remove {
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+    padding: 0;
+  }
+
+  .thumb:hover .remove { opacity: 1; }
+
+  /* ── Deliverables (inline, no card, with bullets) ── */
+  .deliverables-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .deliv-group {
+    margin-bottom: 2.5rem;
+  }
+
+  .deliv-group:last-of-type { margin-bottom: 2rem; }
+
+  .deliv-group-title {
+    font-family: 'Geist', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    text-transform: none;
+  }
+
+  .deliv-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .deliv-list li {
+    font-size: 0.98rem;
+    color: var(--ink);
+    line-height: 1.5;
+    letter-spacing: -0.008em;
+    padding: 0.35rem 0 0.35rem 1.25rem;
+    position: relative;
+  }
+
+  .deliv-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.85rem;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  .deliv-intro {
+    font-size: 0.98rem;
+    color: var(--ink);
+    line-height: 1.55;
+    letter-spacing: -0.008em;
+    margin-bottom: 0.75rem;
+  }
+
+  .deliv-includes {
+    font-size: 0.9rem;
+    color: var(--mid);
+    font-style: italic;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .deliv-note {
+    font-size: 0.88rem;
+    color: var(--mid);
+    font-style: italic;
+    margin-top: 1rem;
+    line-height: 1.55;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 3rem 0 5rem;
+    margin-top: 2rem;
+  }
+
+  .footer-note { color: var(--mid); font-size: 0.9rem; margin-bottom: 2rem; max-width: 28rem; }
+
+  .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+  .btn {
+    font-family: 'Geist', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    transition: all 0.15s;
+    border-radius: 100px;
+  }
+
+  .btn:hover { background: var(--ink); color: var(--bg); }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-primary:hover { background: #333; border-color: #333; }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    background: var(--ink);
+    color: var(--bg);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 200;
+    border-radius: 100px;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .req { color: var(--mid); font-size: 0.85rem; margin-left: 0.3rem; font-weight: 400; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 1.25rem; }
+    .meta-row { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    h1 { font-size: 2.75rem; }
+    .section-title { font-size: 1.2rem; }
+    .actions { flex-direction: column; align-items: stretch; }
+    .btn { text-align: center; }
+    .colophon { flex-direction: column; gap: 0.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="wrap">
+
+  <div class="colophon">
+    <span>Vandelay</span>
+    <span id="dateStr"></span>
+  </div>
+
+  <header>
+    <div class="meta-row">
+      <div>
+        <span class="label">Project</span>
+        <span class="value">HB Surfaces — Identity</span>
+      </div>
+      <div>
+        <span class="label">Client</span>
+        <span class="value">HB Surfaces</span>
+      </div>
+      <div>
+        <span class="label">Studio</span>
+        <span class="value">Vandelay</span>
+      </div>
+    </div>
+
+    <h1>
+      Brand Identity Brief
+      <em>for HB Surfaces</em>
+    </h1>
+
+    <div class="intro">
+      <p>A few questions to shape the brief.</p>
+    </div>
+  </header>
+
+  <form id="brief">
+
+  <!-- 01 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">The business</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">A brief history of HB Surfaces — what it was, and what it's evolving into<span class="req">*</span></label>
+      <textarea name="History and evolution" placeholder="Write freely…"></textarea>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Keep &amp; break</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">What should the new identity keep from the current one?<span class="req">*</span></label>
+      <textarea name="Keep" placeholder="What stays…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">What should it break from?<span class="req">*</span></label>
+      <textarea name="Break" placeholder="What goes…"></textarea>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">The audience</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Who is the single most important person this brand needs to win?<span class="req">*</span></label>
+      <textarea name="Primary audience" placeholder="A portrait, not a demographic…"></textarea>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">The landscape</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Three competitors, and what each one does well or badly<span class="req">*</span></label>
+      <textarea name="Competitors" rows="4" placeholder="1.
+2.
+3."></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Who do you refuse to look like?<span class="req">*</span></label>
+      <textarea name="Refuse" placeholder="Names and reasons…"></textarea>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">References</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Identities you love — and why<span class="req">*</span></label>
+      <textarea name="Love" placeholder="Brand — why…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Identities you dislike — and why</label>
+      <textarea name="Dislike" placeholder="Brand — why…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Images</label>
+      <span class="q-hint">Drop any reference images — identities, applications, moods</span>
+      <div class="upload-zone" id="uploadZone">
+        <p><strong>Drop images here</strong> or click to browse</p>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Moodboard or shared folder link</label>
+      <input type="url" name="Moodboard" placeholder="https://">
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <span class="section-title">Practical</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Must-haves</label>
+      <span class="q-hint">Non-negotiables — the things the identity absolutely has to do or carry</span>
+      <textarea name="Must-haves" placeholder="Write freely…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Nice-to-haves</label>
+      <span class="q-hint">Upside — things that would elevate the work if they land</span>
+      <textarea name="Nice-to-haves" placeholder="Write freely…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Watch-outs</label>
+      <span class="q-hint">Category clichés, sensitivities, or anything we should avoid</span>
+      <textarea name="Watch-outs" placeholder="Write freely…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Target launch</label>
+      <input type="text" name="Launch" placeholder="e.g. Q3 2026">
+    </div>
+
+    <div class="question">
+      <label class="q-label">Anything else?</label>
+      <textarea name="Additional" placeholder="Over to you…"></textarea>
+    </div>
+  </div>
+
+  </form>
+
+  <!-- Deliverables -->
+  <div class="section deliverables-section">
+    <div class="section-header">
+      <span class="section-num">—</span>
+      <span class="section-title">Deliverables</span>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Logo</h3>
+      <ul class="deliv-list">
+        <li>Primary logo</li>
+        <li>Secondary variation (e.g. stacked or simplified version)</li>
+        <li>Icon or mark (where relevant)</li>
+        <li>Defined for consistent use across different contexts</li>
+      </ul>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Colour Palette</h3>
+      <ul class="deliv-list">
+        <li>Primary and supporting colours</li>
+        <li>Digital and print specifications (HEX, RGB, CMYK, Pantone)</li>
+      </ul>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Typography</h3>
+      <ul class="deliv-list">
+        <li>Primary typeface</li>
+        <li>Supporting typeface (if required)</li>
+        <li>Basic hierarchy and usage</li>
+      </ul>
+      <p class="deliv-note">Typeface licensing to be arranged by the client where required.</p>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Stationery</h3>
+      <ul class="deliv-list">
+        <li>Business card</li>
+        <li>Letterhead</li>
+        <li>Basic email signature</li>
+      </ul>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Brand Guidelines</h3>
+      <p class="deliv-intro">A concise document outlining how the identity is applied consistently.</p>
+      <p class="deliv-includes">Includes:</p>
+      <ul class="deliv-list">
+        <li>Logo usage and variations</li>
+        <li>Colour palette</li>
+        <li>Typography</li>
+        <li>Basic layout guidance</li>
+        <li>Example applications</li>
+      </ul>
+    </div>
+
+    <p class="deliv-note" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">As discussed, broader brand world and communications are outside the scope of this phase and can be addressed in a subsequent stage once the core identity is established.</p>
+
+    <div class="question" style="margin-top: 2.5rem;">
+      <label class="q-label">Anything to add or remove from the above?</label>
+      <span class="q-hint">If there's anything missing, or anything here that doesn't belong, let us know</span>
+      <textarea name="Deliverables additions" placeholder="Write freely…"></textarea>
+    </div>
+  </div>
+
+  <footer>
+    <p class="footer-note">When you're done, send it back to Vandelay.</p>
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="emailBtn">Send to Vandelay</button>
+    </div>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+  const d = new Date();
+  document.getElementById('dateStr').textContent =
+    'Brief — ' + d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+
+  function updateProgress() {
+    const textFields = document.querySelectorAll('input[type="text"], input[type="url"], input[type="email"], textarea');
+    let total = textFields.length;
+    let filled = 0;
+    textFields.forEach(f => { if (f.value.trim()) filled++; });
+    const pct = Math.min(100, (filled / total) * 100);
+    document.getElementById('progress').style.width = pct + '%';
+  }
+  document.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('input', updateProgress);
+    el.addEventListener('change', updateProgress);
+  });
+  updateProgress();
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.section').forEach(s => io.observe(s));
+
+  const KEY = 'hbSurfacesBriefDraft_v6';
+  function save() {
+    const data = {};
+    document.querySelectorAll('input, textarea').forEach(el => {
+      const key = el.id || el.name;
+      if (!key || el.type === 'file') return;
+      data[key] = el.value;
+    });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {}
+  }
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      document.querySelectorAll('input, textarea').forEach(el => {
+        const key = el.id || el.name;
+        if (!(key in data)) return;
+        el.value = data[key];
+      });
+      updateProgress();
+    } catch(e) {}
+  }
+  document.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('change', save);
+    el.addEventListener('input', save);
+  });
+  load();
+
+  // ── Image upload (fixed: separated button click from drop zone) ──
+  let uploadedFiles = [];
+  const fileInput = document.getElementById('fileInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const thumbs = document.getElementById('thumbs');
+
+  function renderThumbs() {
+    thumbs.innerHTML = '';
+    uploadedFiles.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const div = document.createElement('div');
+        div.className = 'thumb';
+        div.innerHTML = `<img src="${e.target.result}" alt=""><button type="button" class="remove" data-i="${i}" aria-label="Remove">×</button>`;
+        thumbs.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  thumbs.addEventListener('click', e => {
+    if (e.target.classList.contains('remove')) {
+      const i = parseInt(e.target.dataset.i, 10);
+      uploadedFiles.splice(i, 1);
+      renderThumbs();
+    }
+  });
+
+  // Click on zone opens file browser
+  uploadZone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', e => {
+    const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+    uploadedFiles = uploadedFiles.concat(files);
+    renderThumbs();
+    fileInput.value = '';
+  });
+
+  // Drag and drop
+  uploadZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadZone.classList.add('drag');
+  });
+  uploadZone.addEventListener('dragenter', e => {
+    e.preventDefault();
+    uploadZone.classList.add('drag');
+  });
+  uploadZone.addEventListener('dragleave', e => {
+    e.preventDefault();
+    if (e.target === uploadZone) uploadZone.classList.remove('drag');
+  });
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    uploadedFiles = uploadedFiles.concat(files);
+    renderThumbs();
+  });
+
+  function collect() {
+    const out = [];
+    out.push('HB SURFACES — BRAND IDENTITY BRIEF');
+    out.push('Submitted: ' + new Date().toLocaleString('en-GB'));
+    out.push('='.repeat(52));
+
+    document.querySelectorAll('form .section').forEach(section => {
+      const num = section.querySelector('.section-num').textContent;
+      const title = section.querySelector('.section-title').textContent;
+      out.push('');
+      out.push(`${num} — ${title.toUpperCase()}`);
+      out.push('-'.repeat(52));
+
+      section.querySelectorAll('.question').forEach(q => {
+        const label = q.querySelector('.q-label').textContent.replace(/\*/g, '').trim();
+        out.push('');
+        out.push(label + ':');
+        q.querySelectorAll('input[type="text"], input[type="url"], input[type="email"], textarea').forEach(el => {
+          out.push('  ' + (el.value.trim() || '—'));
+        });
+      });
+    });
+
+    if (uploadedFiles.length) {
+      out.push('');
+      out.push(`IMAGES ATTACHED: ${uploadedFiles.length}`);
+    }
+    return out.join('\n');
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  document.getElementById('emailBtn').addEventListener('click', () => {
+    const text = collect();
+    const subject = encodeURIComponent('HB Surfaces — Brand Identity Brief');
+    const body = encodeURIComponent(text + (uploadedFiles.length ? '\n\n(Images attached separately — please drag them into this email before sending)' : ''));
+    window.location.href = `mailto:hello@vandelay.studio?subject=${subject}&body=${body}`;
+  });
+
+  document.querySelectorAll('textarea').forEach(t => {
+    t.addEventListener('input', () => {
+      t.style.height = 'auto';
+      t.style.height = t.scrollHeight + 'px';
+    });
+  });
+</script>
+
+</body>
+</html>
