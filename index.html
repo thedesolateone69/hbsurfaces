@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HB Surfaces — Brand Identity Brief</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0a0a0a;
+    --mid: #6b6b6b;
+    --line: #c4c4c0;
+    --bg: #dcd9d2;
+    --bg-soft: #e4e1da;
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 1rem;
+    line-height: 1.55;
+    font-weight: 400;
+    letter-spacing: -0.008em;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 2rem; }
+
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 2px; background: var(--ink);
+    width: 0%; transition: width 0.3s ease; z-index: 100;
+  }
+
+  .colophon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    padding-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  header {
+    border-bottom: 1px solid var(--ink);
+    padding: 3.5rem 0 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .meta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 3rem;
+  }
+
+  .meta-row .label {
+    display: block;
+    color: var(--mid);
+    margin-bottom: 0.3rem;
+    font-size: 0.62rem;
+  }
+
+  .meta-row .value {
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-size: clamp(3rem, 7.5vw, 5rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--mid);
+    display: block;
+    font-size: 0.7em;
+  }
+
+  .intro { color: var(--ink); font-size: 1rem; line-height: 1.6; max-width: 34rem; margin-top: 2rem; }
+
+  .section {
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .section.visible { opacity: 1; transform: none; }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--mid);
+    letter-spacing: 0.08em;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.4rem;
+    letter-spacing: -0.015em;
+    font-weight: 400;
+  }
+
+  .question { margin-bottom: 2rem; }
+
+  .q-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .q-hint {
+    display: block;
+    font-size: 0.86rem;
+    color: var(--mid);
+    margin-bottom: 0.75rem;
+    margin-top: -0.15rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  input[type="text"], input[type="url"], input[type="email"], textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ink);
+    padding: 0.55rem 0;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.98rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    border-radius: 0;
+    letter-spacing: -0.008em;
+  }
+
+  input:focus, textarea:focus { border-bottom-width: 2px; }
+  textarea { resize: vertical; min-height: 72px; line-height: 1.55; font-family: inherit; }
+  ::placeholder { color: #9b9892; font-weight: 400; }
+
+  /* ── Deliverables (inline, matched to form styling) ── */
+  .deliverables-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .deliv-group {
+    margin-bottom: 2.5rem;
+  }
+
+  .deliv-group:last-of-type { margin-bottom: 2rem; }
+
+  .deliv-group-title {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 0.85rem;
+    text-transform: none;
+  }
+
+  .deliv-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .deliv-list li {
+    font-size: 1rem;
+    color: var(--ink);
+    line-height: 1.55;
+    letter-spacing: -0.008em;
+    padding: 0.3rem 0 0.3rem 1.25rem;
+    position: relative;
+  }
+
+  .deliv-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.85rem;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  .deliv-intro {
+    font-size: 1rem;
+    color: var(--ink);
+    line-height: 1.55;
+    letter-spacing: -0.008em;
+    margin-bottom: 0.85rem;
+  }
+
+  .deliv-includes {
+    font-size: 0.86rem;
+    color: var(--mid);
+    margin-bottom: 0.4rem;
+    margin-top: 0.4rem;
+    letter-spacing: -0.005em;
+  }
+
+  .deliv-note {
+    font-size: 0.86rem;
+    color: var(--mid);
+    margin-top: 1rem;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    font-style: italic;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 3rem 0 5rem;
+    margin-top: 2rem;
+  }
+
+  .footer-note { color: var(--mid); font-size: 0.9rem; margin-bottom: 2rem; max-width: 28rem; }
+
+  .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+
+  .btn {
+    font-family: 'Geist', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    transition: all 0.15s;
+    border-radius: 100px;
+  }
+
+  .btn:hover { background: var(--ink); color: var(--bg); }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-primary:hover { background: #333; border-color: #333; }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    background: var(--ink);
+    color: var(--bg);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 200;
+    border-radius: 100px;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .req { color: var(--mid); font-size: 0.85rem; margin-left: 0.3rem; font-weight: 400; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 1.25rem; }
+    .meta-row { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    h1 { font-size: 2.75rem; }
+    .section-title { font-size: 1.2rem; }
+    .actions { flex-direction: column; align-items: stretch; }
+    .btn { text-align: center; }
+    .colophon { flex-direction: column; gap: 0.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="wrap">
+
+  <div class="colophon">
+    <span>Vandelay</span>
+    <span id="dateStr"></span>
+  </div>
+
+  <header>
+    <div class="meta-row">
+      <div>
+        <span class="label">Project</span>
+        <span class="value">HB Surfaces — Identity</span>
+      </div>
+      <div>
+        <span class="label">Client</span>
+        <span class="value">HB Surfaces</span>
+      </div>
+      <div>
+        <span class="label">Studio</span>
+        <span class="value">Vandelay</span>
+      </div>
+    </div>
+
+    <h1>
+      Brand Identity Brief
+      <em>for HB Surfaces</em>
+    </h1>
+
+    <div class="intro">
+      <p>A few questions to shape the brief.</p>
+    </div>
+  </header>
+
+  <form id="brief">
+
+  <!-- 01 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">The business</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">A brief history of HB Surfaces — what it was, and what it's evolving into<span class="req">*</span></label>
+      <textarea name="History and evolution" placeholder="Write freely…"></textarea>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Keep &amp; break</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">What should the new identity keep from the current one?<span class="req">*</span></label>
+      <textarea name="Keep" placeholder="What stays…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">What should it break from?<span class="req">*</span></label>
+      <textarea name="Break" placeholder="What goes…"></textarea>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">The audience</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Who is the single most important person this brand needs to win?<span class="req">*</span></label>
+      <textarea name="Primary audience" placeholder="A portrait, not a demographic…"></textarea>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">The landscape</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Three competitors, and what each one does well or badly<span class="req">*</span></label>
+      <textarea name="Competitors" rows="4" placeholder="1.
+2.
+3."></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Who do you refuse to look like?<span class="req">*</span></label>
+      <textarea name="Refuse" placeholder="Names and reasons…"></textarea>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">References</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Identities you love — and why<span class="req">*</span></label>
+      <textarea name="Love" placeholder="Brand — why…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Identities you dislike — and why</label>
+      <textarea name="Dislike" placeholder="Brand — why…"></textarea>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <span class="section-title">Practical</span>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Must-haves</label>
+      <span class="q-hint">Non-negotiables — the things the identity absolutely has to do or carry</span>
+      <textarea name="Must-haves" placeholder="Write freely…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Nice-to-haves</label>
+      <span class="q-hint">Upside — things that would elevate the work if they land</span>
+      <textarea name="Nice-to-haves" placeholder="Write freely…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Watch-outs</label>
+      <span class="q-hint">Category clichés, sensitivities, or anything we should avoid</span>
+      <textarea name="Watch-outs" placeholder="Write freely…"></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Target launch</label>
+      <input type="text" name="Launch" placeholder="e.g. Q3 2026">
+    </div>
+
+    <div class="question">
+      <label class="q-label">Anything else?</label>
+      <textarea name="Additional" placeholder="Over to you…"></textarea>
+    </div>
+  </div>
+
+  </form>
+
+  <!-- Deliverables -->
+  <div class="section deliverables-section">
+    <div class="section-header">
+      <span class="section-num">—</span>
+      <span class="section-title">Deliverables</span>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Logo</h3>
+      <ul class="deliv-list">
+        <li>Primary logo</li>
+        <li>Secondary variation (e.g. stacked or simplified version)</li>
+        <li>Icon or mark (where relevant)</li>
+        <li>Defined for consistent use across different contexts</li>
+      </ul>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Colour Palette</h3>
+      <ul class="deliv-list">
+        <li>Primary and supporting colours</li>
+        <li>Digital and print specifications (HEX, RGB, CMYK, Pantone)</li>
+      </ul>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Typography</h3>
+      <ul class="deliv-list">
+        <li>Primary typeface</li>
+        <li>Supporting typeface (if required)</li>
+        <li>Basic hierarchy and usage</li>
+      </ul>
+      <p class="deliv-note">Typeface licensing to be arranged by the client where required.</p>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Stationery</h3>
+      <ul class="deliv-list">
+        <li>Business card</li>
+        <li>Letterhead</li>
+        <li>Basic email signature</li>
+      </ul>
+    </div>
+
+    <div class="deliv-group">
+      <h3 class="deliv-group-title">Brand Guidelines</h3>
+      <p class="deliv-intro">A concise document outlining how the identity is applied consistently.</p>
+      <p class="deliv-includes">Includes:</p>
+      <ul class="deliv-list">
+        <li>Logo usage and variations</li>
+        <li>Colour palette</li>
+        <li>Typography</li>
+        <li>Basic layout guidance</li>
+        <li>Example applications</li>
+      </ul>
+    </div>
+
+    <p class="deliv-note" style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line);">As discussed, broader brand world and communications are outside the scope of this phase and can be addressed in a subsequent stage once the core identity is established.</p>
+
+    <div class="question" style="margin-top: 2.5rem;">
+      <label class="q-label">Anything to add or remove from the above?</label>
+      <span class="q-hint">If there's anything missing, or anything here that doesn't belong, let us know</span>
+      <textarea name="Deliverables additions" placeholder="Write freely…"></textarea>
+    </div>
+  </div>
+
+  <footer>
+    <p class="footer-note">When you're done, please press the Export PDF button and send it to <a href="mailto:hello@mertsenturk.com" style="color: var(--ink); border-bottom: 1px solid var(--ink); text-decoration: none;">hello@mertsenturk.com</a> along with any additional imagery or screenshots you'd like to share.</p>
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="pdfBtn">Export PDF</button>
+      <button type="button" class="btn" id="resetBtn">Reset form</button>
+    </div>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+  const d = new Date();
+  document.getElementById('dateStr').textContent =
+    'Brief — ' + d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+
+  function updateProgress() {
+    const textFields = document.querySelectorAll('input[type="text"], input[type="url"], input[type="email"], textarea');
+    let total = textFields.length;
+    let filled = 0;
+    textFields.forEach(f => { if (f.value.trim()) filled++; });
+    const pct = Math.min(100, (filled / total) * 100);
+    document.getElementById('progress').style.width = pct + '%';
+  }
+  document.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('input', updateProgress);
+    el.addEventListener('change', updateProgress);
+  });
+  updateProgress();
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.section').forEach(s => io.observe(s));
+
+  const KEY = 'hbSurfacesBriefDraft_v6';
+  function save() {
+    const data = {};
+    document.querySelectorAll('input, textarea').forEach(el => {
+      const key = el.id || el.name;
+      if (!key || el.type === 'file') return;
+      data[key] = el.value;
+    });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {}
+  }
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      document.querySelectorAll('input, textarea').forEach(el => {
+        const key = el.id || el.name;
+        if (!(key in data)) return;
+        el.value = data[key];
+      });
+      updateProgress();
+    } catch(e) {}
+  }
+  document.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('change', save);
+    el.addEventListener('input', save);
+  });
+  load();
+
+  function collect() {
+    const out = [];
+    out.push('HB SURFACES — BRAND IDENTITY BRIEF');
+    out.push('Submitted: ' + new Date().toLocaleString('en-GB'));
+    out.push('='.repeat(52));
+
+    document.querySelectorAll('form .section').forEach(section => {
+      const num = section.querySelector('.section-num').textContent;
+      const title = section.querySelector('.section-title').textContent;
+      out.push('');
+      out.push(`${num} — ${title.toUpperCase()}`);
+      out.push('-'.repeat(52));
+
+      section.querySelectorAll('.question').forEach(q => {
+        const label = q.querySelector('.q-label').textContent.replace(/\*/g, '').trim();
+        out.push('');
+        out.push(label + ':');
+        q.querySelectorAll('input[type="text"], input[type="url"], input[type="email"], textarea').forEach(el => {
+          out.push('  ' + (el.value.trim() || '—'));
+        });
+      });
+    });
+
+    return out.join('\n');
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  // ── PDF Export ──
+  document.getElementById('pdfBtn').addEventListener('click', async () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
+
+    const PAGE_W = doc.internal.pageSize.getWidth();   // 595pt
+    const PAGE_H = doc.internal.pageSize.getHeight();  // 842pt
+    const MARGIN_X = 56;
+    const MARGIN_TOP = 64;
+    const MARGIN_BOTTOM = 72;
+    const CONTENT_W = PAGE_W - MARGIN_X * 2;
+
+    // Bone background on every page
+    function paintBg() {
+      doc.setFillColor(220, 217, 210); // --bg #dcd9d2
+      doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
+    }
+
+    let y = MARGIN_TOP;
+    let pageNum = 1;
+
+    function ensureSpace(needed) {
+      if (y + needed > PAGE_H - MARGIN_BOTTOM) {
+        doc.addPage();
+        pageNum++;
+        paintBg();
+        // Page footer
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(107, 107, 107);
+        doc.text(`Vandelay — HB Surfaces Brand Identity Brief`, MARGIN_X, PAGE_H - 32);
+        doc.text(`${pageNum}`, PAGE_W - MARGIN_X, PAGE_H - 32, { align: 'right' });
+        y = MARGIN_TOP;
+      }
+    }
+
+    function wrapText(text, size, maxWidth) {
+      doc.setFontSize(size);
+      return doc.splitTextToSize(text || '—', maxWidth);
+    }
+
+    paintBg();
+
+    // ── Header ──
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(107, 107, 107);
+    doc.text('VANDELAY', MARGIN_X, y);
+    const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+    doc.text(`BRIEF — ${dateStr}`, PAGE_W - MARGIN_X, y, { align: 'right' });
+    y += 32;
+
+    // Title
+    doc.setFont('times', 'normal');
+    doc.setFontSize(36);
+    doc.setTextColor(10, 10, 10);
+    doc.text('Brand Identity Brief', MARGIN_X, y);
+    y += 30;
+
+    doc.setFont('times', 'italic');
+    doc.setFontSize(22);
+    doc.setTextColor(107, 107, 107);
+    doc.text('for HB Surfaces', MARGIN_X, y);
+    y += 18;
+
+    // Divider
+    doc.setDrawColor(10, 10, 10);
+    doc.setLineWidth(0.5);
+    doc.line(MARGIN_X, y, PAGE_W - MARGIN_X, y);
+    y += 32;
+
+    // ── Sections (form) ──
+    document.querySelectorAll('form .section').forEach(section => {
+      const num = section.querySelector('.section-num').textContent;
+      const title = section.querySelector('.section-title').textContent;
+
+      ensureSpace(80);
+
+      // Section meta
+      doc.setFont('courier', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(107, 107, 107);
+      doc.text(num, MARGIN_X, y);
+
+      // Section title (serif)
+      doc.setFont('times', 'normal');
+      doc.setFontSize(20);
+      doc.setTextColor(10, 10, 10);
+      doc.text(title, MARGIN_X + 28, y);
+      y += 10;
+
+      // Thin divider
+      doc.setDrawColor(196, 196, 192);
+      doc.setLineWidth(0.4);
+      doc.line(MARGIN_X, y, PAGE_W - MARGIN_X, y);
+      y += 20;
+
+      // Questions
+      section.querySelectorAll('.question').forEach(q => {
+        const label = q.querySelector('.q-label').textContent.replace(/\*/g, '').trim();
+        const hint = q.querySelector('.q-hint')?.textContent.trim();
+        const inputs = q.querySelectorAll('input[type="text"], input[type="url"], input[type="email"], textarea');
+
+        // Label
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10.5);
+        doc.setTextColor(10, 10, 10);
+        const labelLines = wrapText(label, 10.5, CONTENT_W);
+        ensureSpace(labelLines.length * 13 + 40);
+        labelLines.forEach(line => {
+          doc.text(line, MARGIN_X, y);
+          y += 13;
+        });
+
+        // Hint
+        if (hint) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(107, 107, 107);
+          const hintLines = wrapText(hint, 9, CONTENT_W);
+          ensureSpace(hintLines.length * 11 + 20);
+          hintLines.forEach(line => {
+            doc.text(line, MARGIN_X, y);
+            y += 11;
+          });
+        }
+
+        y += 6;
+
+        // Answer
+        inputs.forEach(el => {
+          const value = el.value.trim() || '—';
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10.5);
+          doc.setTextColor(10, 10, 10);
+          const valueLines = wrapText(value, 10.5, CONTENT_W);
+          ensureSpace(valueLines.length * 13 + 12);
+          valueLines.forEach(line => {
+            doc.text(line, MARGIN_X, y);
+            y += 13;
+          });
+          // Underline
+          doc.setDrawColor(196, 196, 192);
+          doc.setLineWidth(0.3);
+          doc.line(MARGIN_X, y + 2, PAGE_W - MARGIN_X, y + 2);
+          y += 8;
+        });
+
+        y += 18;
+      });
+
+      y += 18;
+    });
+
+    // ── Deliverables ──
+    doc.addPage();
+    pageNum++;
+    paintBg();
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(107, 107, 107);
+    doc.text(`Vandelay — HB Surfaces Brand Identity Brief`, MARGIN_X, PAGE_H - 32);
+    doc.text(`${pageNum}`, PAGE_W - MARGIN_X, PAGE_H - 32, { align: 'right' });
+    y = MARGIN_TOP;
+
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(107, 107, 107);
+    doc.text('—', MARGIN_X, y);
+    doc.setFont('times', 'normal');
+    doc.setFontSize(20);
+    doc.setTextColor(10, 10, 10);
+    doc.text('Deliverables', MARGIN_X + 28, y);
+    y += 10;
+    doc.setDrawColor(196, 196, 192);
+    doc.setLineWidth(0.4);
+    doc.line(MARGIN_X, y, PAGE_W - MARGIN_X, y);
+    y += 28;
+
+    const deliverables = [
+      { title: 'Logo', items: ['Primary logo', 'Secondary variation (e.g. stacked or simplified version)', 'Icon or mark (where relevant)', 'Defined for consistent use across different contexts'] },
+      { title: 'Colour Palette', items: ['Primary and supporting colours', 'Digital and print specifications (HEX, RGB, CMYK, Pantone)'] },
+      { title: 'Typography', items: ['Primary typeface', 'Supporting typeface (if required)', 'Basic hierarchy and usage'], note: 'Typeface licensing to be arranged by the client where required.' },
+      { title: 'Stationery', items: ['Business card', 'Letterhead', 'Basic email signature'] },
+      { title: 'Brand Guidelines', intro: 'A concise document outlining how the identity is applied consistently.', includesLabel: 'Includes:', items: ['Logo usage and variations', 'Colour palette', 'Typography', 'Basic layout guidance', 'Example applications'] }
+    ];
+
+    deliverables.forEach(group => {
+      ensureSpace(60);
+      doc.setFont('times', 'normal');
+      doc.setFontSize(14);
+      doc.setTextColor(10, 10, 10);
+      doc.text(group.title, MARGIN_X, y);
+      y += 16;
+
+      if (group.intro) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10.5);
+        doc.setTextColor(10, 10, 10);
+        const introLines = wrapText(group.intro, 10.5, CONTENT_W);
+        introLines.forEach(line => {
+          doc.text(line, MARGIN_X, y);
+          y += 13;
+        });
+        y += 4;
+      }
+
+      if (group.includesLabel) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(107, 107, 107);
+        doc.text(group.includesLabel, MARGIN_X, y);
+        y += 12;
+      }
+
+      group.items.forEach(item => {
+        ensureSpace(16);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10.5);
+        doc.setTextColor(10, 10, 10);
+        // bullet
+        doc.setFillColor(10, 10, 10);
+        doc.circle(MARGIN_X + 4, y - 3, 1.2, 'F');
+        const itemLines = wrapText(item, 10.5, CONTENT_W - 16);
+        itemLines.forEach((line, idx) => {
+          doc.text(line, MARGIN_X + 14, y);
+          if (idx < itemLines.length - 1) y += 13;
+        });
+        y += 14;
+      });
+
+      if (group.note) {
+        y += 4;
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(9);
+        doc.setTextColor(107, 107, 107);
+        const noteLines = wrapText(group.note, 9, CONTENT_W);
+        noteLines.forEach(line => {
+          doc.text(line, MARGIN_X, y);
+          y += 11;
+        });
+      }
+
+      y += 22;
+    });
+
+    // Scope note
+    y += 8;
+    ensureSpace(40);
+    doc.setDrawColor(196, 196, 192);
+    doc.setLineWidth(0.4);
+    doc.line(MARGIN_X, y, PAGE_W - MARGIN_X, y);
+    y += 16;
+
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(9);
+    doc.setTextColor(107, 107, 107);
+    const scopeNote = 'As discussed, broader brand world and communications are outside the scope of this phase and can be addressed in a subsequent stage once the core identity is established.';
+    const scopeLines = wrapText(scopeNote, 9, CONTENT_W);
+    scopeLines.forEach(line => {
+      doc.text(line, MARGIN_X, y);
+      y += 11;
+    });
+
+    // Additions (if filled)
+    const additions = document.querySelector('textarea[name="Deliverables additions"]')?.value.trim();
+    if (additions) {
+      y += 24;
+      ensureSpace(40);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10.5);
+      doc.setTextColor(10, 10, 10);
+      doc.text('Additions or amendments:', MARGIN_X, y);
+      y += 16;
+      doc.setFont('helvetica', 'normal');
+      const addLines = wrapText(additions, 10.5, CONTENT_W);
+      addLines.forEach(line => {
+        ensureSpace(13);
+        doc.text(line, MARGIN_X, y);
+        y += 13;
+      });
+    }
+
+    // First page footer
+    doc.setPage(1);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(107, 107, 107);
+    doc.text('Vandelay — HB Surfaces Brand Identity Brief', MARGIN_X, PAGE_H - 32);
+    doc.text('1', PAGE_W - MARGIN_X, PAGE_H - 32, { align: 'right' });
+
+    doc.save('hb-surfaces-brand-identity-brief.pdf');
+    toast('PDF exported');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Clear all answers and start fresh?')) return;
+    try { localStorage.removeItem(KEY); } catch(e) {}
+    document.querySelectorAll('input, textarea').forEach(el => {
+      el.value = '';
+    });
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Form reset');
+  });
+
+  document.querySelectorAll('textarea').forEach(t => {
+    t.addEventListener('input', () => {
+      t.style.height = 'auto';
+      t.style.height = t.scrollHeight + 'px';
+    });
+  });
+</script>
+
+</body>
+</html>
